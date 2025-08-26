@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Campo Minado Quiz - Menopausa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Estilos Gerais */
+    :root {
+      --primary-color: #6a0dad; /* Roxo para destaque */
+      --secondary-color: #e0f7fa; /* Azul claro para fundo */
+      --text-color: #333;
+      --border-color: #b39ddb; /* Bordas mais suaves */
+      --cell-bg: #f3e5f5; /* Fundo de célula mais suave */
+      --revealed-bg: #fff;
+      --bomb-color: #c62828; /* Vermelho mais escuro */
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Estilização do Cabeçalho e Título */
+    header {
+      background: var(--primary-color);
+      color: white;
+      padding: 20px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    header h2 {
+      margin: 0;
+      font-size: 1.8em;
+      font-weight: 700;
+    }
+
+    /* Estilização do botão */
+    #newGameButton {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1em;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    #newGameButton:hover {
+      background-color: #7b1fa2;
+      transform: translateY(-2px);
+    }
+    #newGameButton:active {
+      transform: translateY(0);
+    }
+
+    /* Estilização do Tabuleiro e Células */
+    #board {
+      display: grid;
+      gap: 5px;
+      border-radius: 10px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.5);
+      box-shadow: var(--shadow);
+    }
+    .cell {
+      width: 50px; /* Aumentando o tamanho para melhor interação em touchscreens */
+      height: 50px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 600;
+      background: var(--cell-bg);
+      transition: transform 0.2s, background-color 0.3s;
+      font-size: 1.2em;
+    }
+    .cell:hover:not(.revealed) {
+      transform: scale(1.05);
+      background-color: #e0d9e7;
+    }
+    .cell.revealed {
+      background: var(--revealed-bg);
+      cursor: default;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .cell.bomb {
+      background: var(--bomb-color) !important;
+      color: white;
+      font-size: 1.8em;
+      transform: rotate(360deg) scale(1.1);
+      transition: transform 0.5s;
+    }
+
+    /* Estilização da caixa de pergunta */
+    #questionBox {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: none;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 90%;
+      width: 450px;
+      z-index: 1000;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    #questionBox p {
+      font-size: 1.2em;
+      line-height: 1.5;
+      margin: 0 0 20px;
+      font-weight: 600;
+    }
+
+    /* Botão da caixa de pergunta */
+    #questionBox button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #questionBox button:hover {
+      background-color: #7b1fa2;
+    }
+
+    /* Estilização do Footer */
+    footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #666;
+      text-align: center;
+    }
+    #link {
+      font-weight: 600;
+      color: var(--primary-color);
+      word-wrap: break-word; /* Garante que o link quebre a linha em telas menores */
+    }
+
+    /* Animação para a caixa de pergunta */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -40%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Campo Minado Quiz - Menopausa</h2>
+  </header>
+
+  <button id="newGameButton" onclick="initGame()">Novo Jogo</button>
+  <div id="board"></div>
+
+  <div id="questionBox">
+    <p id="questionText"></p>
+    <button onclick="closeQuestion()">Ok, Entendido!</button>
+  </div>
+
+  <footer>
+    <p>Compartilhe este link para jogar: <span id="link"></span></p>
+  </footer>
+
+  <script>
+    // As perguntas foram reorganizadas para melhor didática.
+    // Sugiro colocar frases curtas para que o aluno escolha o colega, e a pergunta completa pode ser feita pelo professor.
+    const allPhrases = [
+      "Atenção, pergunta sobre: **Saúde Óssea!**",
+      "Pergunte ao seu colega sobre: **Infecções Urinárias!**",
+      "Pergunte ao seu colega sobre: **Saúde Cardiovascular!**",
+      "Deu sorte! Escolha um colega para falar um sintoma comum da menopausa.",
+      "Atenção, pergunta sobre: **Saúde Ocular!**",
+      "Deu sorte! Sem perguntas por aqui."
+    ];
+
+    const boardSize = 5;
+    let board = [];
+    let availablePhrases = [...allPhrases];
+    let bombs = [];
+    let gameActive = false; // Controla se o jogo está ativo
+
+    function initGame() {
+      const boardDiv = document.getElementById("board");
+      boardDiv.innerHTML = "";
+      boardDiv.style.gridTemplateColumns = `repeat(${boardSize}, 50px)`;
+      board = [];
+      availablePhrases = [...allPhrases];
+      gameActive = true;
+
+      bombs = [];
+      // Aumentando o número de bombas para 8, para maior desafio e interatividade
+      while (bombs.length < 8) {
+        let b = Math.floor(Math.random() * (boardSize * boardSize));
+        if (!bombs.includes(b)) bombs.push(b);
+      }
+
+      for (let i = 0; i < boardSize * boardSize; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.index = i;
+        cell.onclick = () => revealCell(cell);
+        board.push(cell);
+        boardDiv.appendChild(cell);
+      }
+    }
+
+    function revealCell(cell) {
+      if (!gameActive || cell.classList.contains("revealed")) return;
+
+      const index = parseInt(cell.dataset.index);
+      cell.classList.add("revealed");
+
+      if (bombs.includes(index)) {
+        cell.classList.add("bomb");
+        cell.textContent = "💣";
+        showQuestion("Explodiu! Você encontrou uma bomba!");
+        // O jogo termina se uma bomba for encontrada
+        gameActive = false;
+        return;
+      }
+
+      // Se todas as frases já foram usadas, o aluno continua jogando
+      if (availablePhrases.length === 0) {
+        cell.textContent = "✅";
+        showQuestion("Todas as perguntas já foram feitas. Fim de jogo!");
+        gameActive = false;
+        return;
+      }
+
+      const i = Math.floor(Math.random() * availablePhrases.length);
+      const phrase = availablePhrases.splice(i, 1)[0];
+
+      cell.textContent = "?";
+      showQuestion(phrase);
+    }
+
+    function showQuestion(text) {
+      document.getElementById("questionText").innerHTML = text;
+      document.getElementById("questionBox").style.display = "block";
+    }
+
+    function closeQuestion() {
+      document.getElementById("questionBox").style.display = "none";
+    }
+
+    document.getElementById("link").innerText = window.location.href;
+
+    // Inicializa o jogo ao carregar a página
+    window.onload = initGame;
+  </script>
+</body>
+</html>
