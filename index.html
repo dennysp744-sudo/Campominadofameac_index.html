@@ -2,21 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Campo Minado Quiz - Menopausa</title>
+  <title>Efeitos do estrogênio no corpo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Estilos Gerais */
     :root {
-      --primary-color: #6a0dad; /* Roxo para destaque */
-      --secondary-color: #e0f7fa; /* Azul claro para fundo */
+      --primary-color: #6a0dad;
+      --secondary-color: #e0f7fa;
       --text-color: #333;
-      --border-color: #b39ddb; /* Bordas mais suaves */
-      --cell-bg: #f3e5f5; /* Fundo de célula mais suave */
+      --border-color: #b39ddb;
+      --cell-bg: #f3e5f5;
       --revealed-bg: #fff;
-      --bomb-color: #c62828; /* Vermelho mais escuro */
+      --bomb-color: #c62828;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
@@ -33,7 +32,6 @@
       padding: 20px;
     }
 
-    /* Estilização do Cabeçalho e Título */
     header {
       background: var(--primary-color);
       color: white;
@@ -51,7 +49,6 @@
       font-weight: 700;
     }
 
-    /* Estilização do botão */
     #newGameButton {
       background-color: var(--primary-color);
       color: white;
@@ -73,7 +70,6 @@
       transform: translateY(0);
     }
 
-    /* Estilização do Tabuleiro e Células */
     #board {
       display: grid;
       gap: 5px;
@@ -83,7 +79,7 @@
       box-shadow: var(--shadow);
     }
     .cell {
-      width: 50px; /* Aumentando o tamanho para melhor interação em touchscreens */
+      width: 50px;
       height: 50px;
       border: 2px solid var(--border-color);
       border-radius: 8px;
@@ -113,7 +109,6 @@
       transition: transform 0.5s;
     }
 
-    /* Estilização da caixa de pergunta */
     #questionBox {
       display: none;
       position: fixed;
@@ -139,7 +134,6 @@
       font-weight: 600;
     }
 
-    /* Botão da caixa de pergunta */
     #questionBox button {
       background-color: var(--primary-color);
       color: white;
@@ -154,7 +148,6 @@
       background-color: #7b1fa2;
     }
 
-    /* Estilização do Footer */
     footer {
       margin-top: 20px;
       font-size: 0.9em;
@@ -164,10 +157,9 @@
     #link {
       font-weight: 600;
       color: var(--primary-color);
-      word-wrap: break-word; /* Garante que o link quebre a linha em telas menores */
+      word-wrap: break-word;
     }
 
-    /* Animação para a caixa de pergunta */
     @keyframes fadeIn {
       from { opacity: 0; transform: translate(-50%, -40%); }
       to { opacity: 1; transform: translate(-50%, -50%); }
@@ -176,7 +168,7 @@
 </head>
 <body>
   <header>
-    <h2>Campo Minado Quiz - Menopausa</h2>
+    <h2>Efeitos do estrogênio no corpo</h2>
   </header>
 
   <button id="newGameButton" onclick="initGame()">Novo Jogo</button>
@@ -192,22 +184,21 @@
   </footer>
 
   <script>
-    // As perguntas foram reorganizadas para melhor didática.
-    // Sugiro colocar frases curtas para que o aluno escolha o colega, e a pergunta completa pode ser feita pelo professor.
     const allPhrases = [
-      "Atenção, pergunta sobre: **Saúde Óssea!**",
-      "Pergunte ao seu colega sobre: **Infecções Urinárias!**",
-      "Pergunte ao seu colega sobre: **Saúde Cardiovascular!**",
-      "Deu sorte! Escolha um colega para falar um sintoma comum da menopausa.",
-      "Atenção, pergunta sobre: **Saúde Ocular!**",
-      "Deu sorte! Sem perguntas por aqui."
+      "Por que a queda dos níveis de estrogênio pode favorecer infecções urinárias recorrentes em mulheres na pós-menopausa?",
+      "Deu sorte! Sem perguntas por aqui",
+      "Quais alterações são causadas na visão pela queda dos níveis de estrogênio na menopausa?",
+      "Deu sorte! Sem perguntas por aqui",
+      "De que forma o estrogênio atua na manutenção da densidade óssea e qual é a consequência de sua deficiência.",
+      "Deu sorte! Sem perguntas por aqui",
+      "Como o estrogênio influencia a saúde cardiovascular e por que sua queda aumenta o risco de doenças cardíacas?"
     ];
 
     const boardSize = 5;
     let board = [];
-    let availablePhrases = [...allPhrases];
+    let availablePhrases = [];
     let bombs = [];
-    let gameActive = false; // Controla se o jogo está ativo
+    let gameActive = false;
 
     function initGame() {
       const boardDiv = document.getElementById("board");
@@ -218,7 +209,6 @@
       gameActive = true;
 
       bombs = [];
-      // Aumentando o número de bombas para 8, para maior desafio e interatividade
       while (bombs.length < 8) {
         let b = Math.floor(Math.random() * (boardSize * boardSize));
         if (!bombs.includes(b)) bombs.push(b);
@@ -243,13 +233,11 @@
       if (bombs.includes(index)) {
         cell.classList.add("bomb");
         cell.textContent = "💣";
-        showQuestion("Explodiu! Você encontrou uma bomba!");
-        // O jogo termina se uma bomba for encontrada
+        showQuestion("Explodiu! Você encontrou uma bomba! Hora de uma nova rodada.");
         gameActive = false;
         return;
       }
 
-      // Se todas as frases já foram usadas, o aluno continua jogando
       if (availablePhrases.length === 0) {
         cell.textContent = "✅";
         showQuestion("Todas as perguntas já foram feitas. Fim de jogo!");
@@ -275,7 +263,6 @@
 
     document.getElementById("link").innerText = window.location.href;
 
-    // Inicializa o jogo ao carregar a página
     window.onload = initGame;
   </script>
 </body>
